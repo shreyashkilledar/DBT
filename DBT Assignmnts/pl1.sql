@@ -1,4 +1,4 @@
-drop procedure if exists pro1;
+/* drop procedure if exists pro1;
 delimiter $
 create procedure pro1()
 BEGIN
@@ -84,8 +84,6 @@ end $
 delimiter ;
 
 
-
-
 drop procedure if exists pro4;
 delimiter $
 create procedure pro4(_deptno int)
@@ -100,9 +98,6 @@ BEGIN
 	end if;
 end $
 delimiter ;
-
-
-
 
 
 drop procedure if exists pro5;
@@ -122,8 +117,6 @@ delimiter ;
 
 
 
-
-
 drop procedure if exists pro6;
 delimiter $
 create procedure pro6()
@@ -132,8 +125,6 @@ declare exit handler for 1050 select 'Table present';
 	create table c(c1 int primary key auto_increment , c2 int);
 end $
 delimiter ;
-
-
 
 
 
@@ -146,9 +137,6 @@ declare exit handler for 1051 select "table not found";
 end $
 delimiter ;
 
-
-
-
 drop procedure if exists pro7;
 delimiter $
 create procedure pro7(_start int, _end int)
@@ -156,8 +144,6 @@ BEGIN
 	select row_number() over() R1, ename,job,sal from emp limit _start, _end;
 end $
 delimiter ;
-
-
 
 
 drop procedure if exists pro8;
@@ -174,7 +160,6 @@ delimiter ;
 
 
 
-
 drop procedure if exists pro9;
 delimiter $
 create procedure pro9(_tName varchar(20))
@@ -185,9 +170,6 @@ BEGIN
 
 end $
 delimiter ;
-
-
-
 
 drop procedure if exists pro9;
 delimiter $
@@ -200,9 +182,6 @@ BEGIN
 	execute z using @tName;
 end $
 delimiter ;
-
-
-
 
 
 drop procedure if exists pro10;
@@ -237,8 +216,6 @@ delimiter ;
 
 
 
-
-
 drop function if exists f1;
 delimiter $
 create function f1() returns int
@@ -247,8 +224,6 @@ BEGIN
     return 10;
 end $
 delimiter ;
-
-
 
 
 
@@ -263,9 +238,6 @@ BEGIN
 end $
 delimiter ;
 
-
-
-
 drop function if exists f3;
 delimiter $
 create function f3() returns int
@@ -276,4 +248,125 @@ BEGIN
 	return z;
 end $
 delimiter ;
+ insert into d values(f3())
 
+drop procedure if exists pro1;
+delimiter $
+create procedure pro1()
+BEGIN
+	call display('Hello World');
+end $
+delimiter ;
+
+drop procedure if exists display;
+delimiter $
+create procedure display(msg varchar(2000))
+BEGIN
+	select msg as R1;
+end $
+delimiter ;
+
+
+
+drop procedure if exists pro1;
+delimiter $
+create procedure pro1()
+BEGIN
+	select max(sal) into @z  from emp;
+end $
+delimiter ;
+
+
+drop function if exists f1;
+delimiter $
+create function f1() returns int
+deterministic
+BEGIN
+	call pro1();
+    return @z;
+	
+end $
+delimiter ;
+
+
+
+
+drop procedure if exists pro1;
+delimiter $
+create procedure pro1()
+BEGIN
+	select max(sal) into @z  from emp; 
+	select * from dept;
+end $
+delimiter ;
+
+
+drop trigger if exists tr1;
+delimiter $
+create trigger tr1 before insert on d for each ROW
+BEGIN
+	call pro1();
+end  $
+delimiter ;
+
+
+
+drop trigger if exists tr1;
+delimiter $
+create trigger tr1 before insert on d for each ROW
+BEGIN
+	insert into d1 values(NEW.DEPTNO, NEW.DNAME, NEW.LOC, current_date(), current_time(), user());
+end  $
+delimiter ;
+
+
+drop trigger if exists tr2;
+delimiter $
+create trigger tr2 before delete on d for each ROW
+BEGIN
+	insert into d2 values(OLD.DEPTNO, OLD.DNAME, OLD.LOC, current_date(), current_time(), user());
+end  $
+delimiter ;
+
+
+drop trigger if exists tr1;
+delimiter $
+create trigger tr1 before insert on d for each ROW
+BEGIN
+	if dayname(now()) = 'Monday' THEN
+		signal sqlstate '42000' set message_text='Invalid transaction, because to is Monday';
+	end if;
+end  $
+delimiter ;
+
+
+drop trigger if exists tr1;
+delimiter $
+create trigger tr1 before insert on d for each ROW
+BEGIN
+	declare z int;
+	select max(deptno) + 1 into z from d;
+	set new.deptno = z;
+	if z > 56 THEN
+		signal sqlstate '42000' set message_text="Department number is more than 56...";
+	end if;
+end  $
+delimiter ;
+
+drop trigger if exists tr1;
+delimiter $
+create trigger tr1 after insert on a for each ROW
+BEGIN
+	insert into b values(new.c1);
+end  $
+delimiter ;
+
+*/
+
+drop trigger if exists tr1;
+delimiter $
+create trigger tr1 before insert on a for each ROW
+BEGIN
+	set new.c2 = upper(new.c2);
+end  $
+delimiter ;
